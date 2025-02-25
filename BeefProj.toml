@@ -1,0 +1,10 @@
+FileVersion = 1
+
+[Project]
+Name = "zstd-beef"
+TargetType = "BeefLib"
+StartupObject = "zstd_beef.Program"
+
+[Configs.Debug.Win64]
+CLibType = "DynamicDebug"
+LibPaths = ["$(ProjectDir)\\libs\\zstd_static.lib"]
