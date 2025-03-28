@@ -17,7 +17,7 @@
 using System;
 using System.Interop;
 
-namespace zstd_Beef;
+namespace zstd;
 
 public static class zstd
 {
@@ -58,10 +58,10 @@ public static class zstd
 	*******************************************************************************/
 
 	/*------   Version   ------*/
-	const int ZSTD_VERSION_MAJOR    = 1;
-	const int ZSTD_VERSION_MINOR    = 5;
-	const int ZSTD_VERSION_RELEASE  = 7;
-	const int ZSTD_VERSION_NUMBER  = (ZSTD_VERSION_MAJOR * 100 * 100 + ZSTD_VERSION_MINOR * 100 + ZSTD_VERSION_RELEASE);
+	const c_int ZSTD_VERSION_MAJOR    = 1;
+	const c_int ZSTD_VERSION_MINOR    = 5;
+	const c_int ZSTD_VERSION_RELEASE  = 7;
+	const c_int ZSTD_VERSION_NUMBER  = (ZSTD_VERSION_MAJOR * 100 * 100 + ZSTD_VERSION_MINOR * 100 + ZSTD_VERSION_RELEASE);
 
 	/*! ZSTD_versionNumber() :
 	*  Return runtime library version, the value is (MAJOR*100*100 + MINOR*100 + RELEASE). */
@@ -80,7 +80,7 @@ public static class zstd
 	*  Default constant
 	***************************************/
 	#if !ZSTD_CLEVEL_DEFAULT
-	const int ZSTD_CLEVEL_DEFAULT = 3;
+	const c_int ZSTD_CLEVEL_DEFAULT = 3;
 	#endif
 
 	/* *************************************
@@ -88,13 +88,13 @@ public static class zstd
 	***************************************/
 
 	/* All magic numbers are supposed read/written to/from files/memory using little-endian convention */
-	const int ZSTD_MAGICNUMBER            = 0xFD2FB528; /* valid since v0.8.0 */
-	const int ZSTD_MAGIC_DICTIONARY       = 0xEC30A437; /* valid since v0.7.0 */
-	const int ZSTD_MAGIC_SKIPPABLE_START  = 0x184D2A50; /* all 16 values, from 0x184D2A50 to 0x184D2A5F, signal the beginning of a skippable frame */
-	const int ZSTD_MAGIC_SKIPPABLE_MASK   = 0xFFFFFFF0;
+	const c_int ZSTD_MAGICNUMBER            = (.)0xFD2FB528; /* valid since v0.8.0 */
+	const c_int ZSTD_MAGIC_DICTIONARY       = (.)0xEC30A437; /* valid since v0.7.0 */
+	const c_int ZSTD_MAGIC_SKIPPABLE_START  = (.)0x184D2A50; /* all 16 values, from 0x184D2A50 to 0x184D2A5F, signal the beginning of a skippable frame */
+	const c_int ZSTD_MAGIC_SKIPPABLE_MASK   = (.)0xFFFFFFF0;
 
-	const int ZSTD_BLOCKSIZELOG_MAX  = 17;
-	const int ZSTD_BLOCKSIZE_MAX     = (1 << ZSTD_BLOCKSIZELOG_MAX);
+	const c_int ZSTD_BLOCKSIZELOG_MAX  = 17;
+	const c_int ZSTD_BLOCKSIZE_MAX     = (1 << ZSTD_BLOCKSIZELOG_MAX);
 
 
 	/***************************************
@@ -106,7 +106,7 @@ public static class zstd
 	*        enough space to successfully compress the data.
 	*  @return : compressed size written into `dst` (<= `dstCapacity),
 	*            or an error code if it fails (which can be tested using ZSTD_isError()). */
-	[CLink] public static extern size_t ZSTD_compress(void* dst, size_t dstCapacity, void* src, size_t srcSize, int compressionLevel);
+	[CLink] public static extern size_t ZSTD_compress(void* dst, size_t dstCapacity, void* src, size_t srcSize, c_int compressionLevel);
 
 	/*! ZSTD_decompress() :
 	* `compressedSize` : must be the _exact_ size of some number of compressed and/or skippable frames.
@@ -146,8 +146,8 @@ public static class zstd
 	*           Always ensure return value fits within application's authorized limits.
 	*           Each application can set its own limits.
 	*  note 6 : This function replaces ZSTD_getDecompressedSize() */
-	// const int ZSTD_CONTENTSIZE_UNKNOWN = (0ULL - 1);
-	// const int ZSTD_CONTENTSIZE_ERROR   = (0ULL - 2);
+	// const c_int ZSTD_CONTENTSIZE_UNKNOWN = (0ULL - 1);
+	// const c_int ZSTD_CONTENTSIZE_ERROR   = (0ULL - 2);
 
 	[CLink] public static extern c_ulonglong ZSTD_getFrameContentSize(void* src, size_t srcSize);
 
@@ -210,11 +210,11 @@ public static class zstd
 
 	[CLink] public static extern char* ZSTD_getErrorName(size_t result); /*!< provides readable string from a function result */
 
-	[CLink] public static extern int ZSTD_minCLevel(); /*!< minimum negative compression level allowed, requires v1.4.0+ */
+	[CLink] public static extern c_int ZSTD_minCLevel(); /*!< minimum negative compression level allowed, requires v1.4.0+ */
 
-	[CLink] public static extern int ZSTD_maxCLevel(); /*!< maximum compression level available */
+	[CLink] public static extern c_int ZSTD_maxCLevel(); /*!< maximum compression level available */
 
-	[CLink] public static extern int ZSTD_defaultCLevel(); /*!< default compression level, specified by ZSTD_CLEVEL_DEFAULT, requires v1.5.0+ */
+	[CLink] public static extern c_int ZSTD_defaultCLevel(); /*!< default compression level, specified by ZSTD_CLEVEL_DEFAULT, requires v1.5.0+ */
 
 
 	/***************************************
@@ -244,7 +244,7 @@ public static class zstd
 	*  If any advanced parameter was set using the advanced API,
 	*  they will all be reset. Only @compressionLevel remains.
 	*/
-	[CLink] public static extern size_t ZSTD_compressCCtx(ZSTD_CCtx* cctx, void* dst, size_t dstCapacity, void* src, size_t srcSize, int compressionLevel);
+	[CLink] public static extern size_t ZSTD_compressCCtx(ZSTD_CCtx* cctx, void* dst, size_t dstCapacity, void* src, size_t srcSize, c_int compressionLevel);
 
 	/*= Decompression context
 	*  When decompressing many times,
@@ -285,7 +285,7 @@ public static class zstd
 
 
 	/* Compression strategies, listed from fastest to strongest */
-	enum ZSTD_strategy
+	public enum ZSTD_strategy : c_int
 	{
 		ZSTD_fast = 1,
 		ZSTD_dfast = 2,
@@ -298,9 +298,9 @@ public static class zstd
 		ZSTD_btultra2 = 9
 				/* note : new strategies _might_ be added in the future.
 							Only the order (from fast to strong) is guaranteed */
-	};
+	}
 
-	public enum ZSTD_cParameter
+	public enum ZSTD_cParameter : c_int
 	{
 
 		/* compression parameters
@@ -494,14 +494,14 @@ public static class zstd
 		ZSTD_c_experimentalParam18 = 1015,
 		ZSTD_c_experimentalParam19 = 1016,
 		ZSTD_c_experimentalParam20 = 1017
-	};
+	}
 
 	public struct ZSTD_bounds
 	{
 		size_t error;
-		int lowerBound;
-		int upperBound;
-	};
+		c_int lowerBound;
+		c_int upperBound;
+	}
 
 	/*! ZSTD_cParam_getBounds() :
 	*  All parameters must belong to an interval with lower and upper bounds,
@@ -523,7 +523,7 @@ public static class zstd
 	*              new parameters will be active for next job only (after a flush()).
 	* @return : an error code (which can be tested using ZSTD_isError()).
 	*/
-	[CLink] public static extern size_t ZSTD_CCtx_setParameter(ZSTD_CCtx* cctx, ZSTD_cParameter param, int value);
+	[CLink] public static extern size_t ZSTD_CCtx_setParameter(ZSTD_CCtx* cctx, ZSTD_cParameter param, c_int value);
 
 	/*! ZSTD_CCtx_setPledgedSrcSize() :
 	*  Total input data size to be compressed as a single frame.
@@ -542,12 +542,12 @@ public static class zstd
 	*/
 	[CLink] public static extern size_t ZSTD_CCtx_setPledgedSrcSize(ZSTD_CCtx* cctx, c_ulonglong pledgedSrcSize);
 
-	public enum ZSTD_ResetDirective
+	public enum ZSTD_ResetDirective : c_int
 	{
 		ZSTD_reset_session_only = 1,
 		ZSTD_reset_parameters = 2,
 		ZSTD_reset_session_and_parameters = 3
-	};
+	}
 
 	/*! ZSTD_CCtx_reset() :
 	*  There are 2 different things that can be reset, independently or jointly :
@@ -592,7 +592,7 @@ public static class zstd
 	*        Therefore, no new decompression function is necessary.
 	*/
 
-	enum ZSTD_dParameter
+	public enum ZSTD_dParameter : c_int
 	{
 		ZSTD_d_windowLogMax = 100, /* Select a size limit (in power of 2) beyond which
 								* the streaming API will refuse to allocate memory buffer
@@ -620,7 +620,7 @@ public static class zstd
 		ZSTD_d_experimentalParam5 = 1004,
 		ZSTD_d_experimentalParam6 = 1005
 
-	};
+	}
 
 	/*! ZSTD_dParam_getBounds() :
 	*  All parameters must belong to an interval with lower and upper bounds,
@@ -638,7 +638,7 @@ public static class zstd
 	*  Setting a parameter is only possible during frame initialization (before starting decompression).
 	* @return : 0, or an error code (which can be tested using ZSTD_isError()).
 	*/
-	[CLink] public static extern size_t ZSTD_DCtx_setParameter(ZSTD_DCtx* dctx, ZSTD_dParameter param, int value);
+	[CLink] public static extern size_t ZSTD_DCtx_setParameter(ZSTD_DCtx* dctx, ZSTD_dParameter param, c_int value);
 
 	/*! ZSTD_DCtx_reset() :
 	*  Return a DCtx to clean state.
@@ -658,14 +658,14 @@ public static class zstd
 		void* src; /**< start of input buffer */
 		size_t size; /**< size of input buffer */
 		size_t pos; /**< position where reading stopped. Will be updated. Necessarily 0 <= pos <= size */
-	};
+	}
 
 	struct ZSTD_outBuffer
 	{
 		void*  dst; /**< start of output buffer */
 		size_t size; /**< size of output buffer */
 		size_t pos; /**< position where writing stopped. Will be updated. Necessarily 0 <= pos <= size */
-	};
+	}
 
 
 
@@ -737,7 +737,7 @@ public static class zstd
 	[CLink] public static extern size_t ZSTD_freeCStream(ZSTD_CStream* zcs); /* accept NULL pointer */
 
 		/*===== Streaming compression functions =====*/
-	public enum ZSTD_EndDirective
+	public enum ZSTD_EndDirective : c_int
 	{
 		ZSTD_e_continue = 0, /* collect more data, encoder decides when to output compressed result, for optimal compression ratio */
 		ZSTD_e_flush = 1, /* flush any data provided so far,
@@ -749,7 +749,7 @@ public static class zstd
 							* After that point, any additional data starts a new frame.
 							* note : each frame is independent (does not reference any content from previous frame).
 							: note : multithreaded compression will block to flush as much output as possible. */
-	};
+	}
 
 	/*! ZSTD_compressStream2() : Requires v1.4.0+
 	*  Behaves about the same as ZSTD_compressStream, with additional control on end directive.
@@ -814,7 +814,7 @@ public static class zstd
 	* Note that ZSTD_initCStream() clears any previously set dictionary. Use the new API
 	* to compress with a dictionary.
 	*/
-	[CLink] public static extern size_t ZSTD_initCStream(ZSTD_CStream* zcs, int compressionLevel);
+	[CLink] public static extern size_t ZSTD_initCStream(ZSTD_CStream* zcs, c_int compressionLevel);
 	/*!
 	* Alternative for ZSTD_compressStream2(zcs, output, input, ZSTD_e_continue).
 	* NOTE: The return value is different. ZSTD_compressStream() returns a hint for
@@ -917,7 +917,7 @@ public static class zstd
 	*  Note : This function loads the dictionary, resulting in significant startup delay.
 	*         It's intended for a dictionary used only once.
 	*  Note 2 : When `dict == NULL || dictSize < 8` no dictionary is used. */
-	[CLink] public static extern size_t ZSTD_compress_usingDict(ZSTD_CCtx* ctx, void* dst, size_t dstCapacity, void* src, size_t srcSize, void* dict, size_t dictSize, int compressionLevel);
+	[CLink] public static extern size_t ZSTD_compress_usingDict(ZSTD_CCtx* ctx, void* dst, size_t dstCapacity, void* src, size_t srcSize, void* dict, size_t dictSize, c_int compressionLevel);
 
 	/*! ZSTD_decompress_usingDict() :
 	*  Decompression using a known Dictionary.
@@ -945,7 +945,7 @@ public static class zstd
 	*      in which case the only thing that it transports is the @compressionLevel.
 	*      This can be useful in a pipeline featuring ZSTD_compress_usingCDict() exclusively,
 	*      expecting a ZSTD_CDict parameter with any data, including those without a known dictionary. */
-	[CLink] public static extern ZSTD_CDict* ZSTD_createCDict(void* dictBuffer, size_t dictSize, int compressionLevel);
+	[CLink] public static extern ZSTD_CDict* ZSTD_createCDict(void* dictBuffer, size_t dictSize, c_int compressionLevel);
 
 	/*! ZSTD_freeCDict() :
 	*  Function frees memory allocated by ZSTD_createCDict().
@@ -1173,37 +1173,37 @@ public static class zstd
 	* Some of them might be removed in the future (especially when redundant with existing stable functions)
 	* ***************************************************************************************/
 
-	// const int ZSTD_FRAMEHEADERSIZE_PREFIX = (format) ((format) == ZSTD_f_zstd1 ? 5 : 1)   /* minimum input size required to query frame header size */;
-	// const int ZSTD_FRAMEHEADERSIZE_MIN = (format)    ((format) == ZSTD_f_zstd1 ? 6 : 2);
-	const int ZSTD_FRAMEHEADERSIZE_MAX =   18 /* can be useful for static allocation */;
-	const int ZSTD_SKIPPABLEHEADERSIZE =    8;
+	// const c_int ZSTD_FRAMEHEADERSIZE_PREFIX = (format) ((format) == ZSTD_f_zstd1 ? 5 : 1)   /* minimum input size required to query frame header size */;
+	// const c_int ZSTD_FRAMEHEADERSIZE_MIN = (format)    ((format) == ZSTD_f_zstd1 ? 6 : 2);
+	const c_int ZSTD_FRAMEHEADERSIZE_MAX =   18 /* can be useful for static allocation */;
+	const c_int ZSTD_SKIPPABLEHEADERSIZE =    8;
 
 	/* compression parameter bounds */
-	const int ZSTD_WINDOWLOG_MAX_32 =    30;
-	const int ZSTD_WINDOWLOG_MAX_64 =    31;
-	const int ZSTD_WINDOWLOG_MAX =     ((int)(sizeof(size_t) == 4 ? ZSTD_WINDOWLOG_MAX_32 : ZSTD_WINDOWLOG_MAX_64));
-	const int ZSTD_WINDOWLOG_MIN =       10;
-	const int ZSTD_HASHLOG_MAX =       ((ZSTD_WINDOWLOG_MAX < 30) ? ZSTD_WINDOWLOG_MAX : 30);
-	const int ZSTD_HASHLOG_MIN =          6;
-	const int ZSTD_CHAINLOG_MAX_32 =     29;
-	const int ZSTD_CHAINLOG_MAX_64 =     30;
-	const int ZSTD_CHAINLOG_MAX =      ((int)(sizeof(size_t) == 4 ? ZSTD_CHAINLOG_MAX_32 : ZSTD_CHAINLOG_MAX_64));
-	const int ZSTD_CHAINLOG_MIN =        ZSTD_HASHLOG_MIN;
-	const int ZSTD_SEARCHLOG_MAX =      (ZSTD_WINDOWLOG_MAX - 1);
-	const int ZSTD_SEARCHLOG_MIN =        1;
-	const int ZSTD_MINMATCH_MAX =         7 /* only for ZSTD_fast, other strategies are limited to 6 */;
-	const int ZSTD_MINMATCH_MIN =         3 /* only for ZSTD_btopt+, faster strategies are limited to 4 */;
-	const int ZSTD_TARGETLENGTH_MAX =    ZSTD_BLOCKSIZE_MAX;
-	const int ZSTD_TARGETLENGTH_MIN =     0 /* note : comparing this constant to an c_uint results in a tautological test */;
-	// const int ZSTD_STRATEGY_MIN =        ZSTD_fast;
-	// const int ZSTD_STRATEGY_MAX =        ZSTD_btultra2;
-	const int ZSTD_BLOCKSIZE_MAX_MIN = (1 << 10) /* The minimum valid max blocksize. Maximum blocksizes smaller than this make compressBound() inaccurate. */;
+	const c_int ZSTD_WINDOWLOG_MAX_32 =    30;
+	const c_int ZSTD_WINDOWLOG_MAX_64 =    31;
+	const c_int ZSTD_WINDOWLOG_MAX =     ((c_int)(sizeof(size_t) == 4 ? ZSTD_WINDOWLOG_MAX_32 : ZSTD_WINDOWLOG_MAX_64));
+	const c_int ZSTD_WINDOWLOG_MIN =       10;
+	const c_int ZSTD_HASHLOG_MAX =       ((ZSTD_WINDOWLOG_MAX < 30) ? ZSTD_WINDOWLOG_MAX : 30);
+	const c_int ZSTD_HASHLOG_MIN =          6;
+	const c_int ZSTD_CHAINLOG_MAX_32 =     29;
+	const c_int ZSTD_CHAINLOG_MAX_64 =     30;
+	const c_int ZSTD_CHAINLOG_MAX =      ((c_int)(sizeof(size_t) == 4 ? ZSTD_CHAINLOG_MAX_32 : ZSTD_CHAINLOG_MAX_64));
+	const c_int ZSTD_CHAINLOG_MIN =        ZSTD_HASHLOG_MIN;
+	const c_int ZSTD_SEARCHLOG_MAX =      (ZSTD_WINDOWLOG_MAX - 1);
+	const c_int ZSTD_SEARCHLOG_MIN =        1;
+	const c_int ZSTD_MINMATCH_MAX =         7 /* only for ZSTD_fast, other strategies are limited to 6 */;
+	const c_int ZSTD_MINMATCH_MIN =         3 /* only for ZSTD_btopt+, faster strategies are limited to 4 */;
+	const c_int ZSTD_TARGETLENGTH_MAX =    ZSTD_BLOCKSIZE_MAX;
+	const c_int ZSTD_TARGETLENGTH_MIN =     0 /* note : comparing this constant to an c_uint results in a tautological test */;
+	// const c_int ZSTD_STRATEGY_MIN =        ZSTD_fast;
+	// const c_int ZSTD_STRATEGY_MAX =        ZSTD_btultra2;
+	const c_int ZSTD_BLOCKSIZE_MAX_MIN = (1 << 10) /* The minimum valid max blocksize. Maximum blocksizes smaller than this make compressBound() inaccurate. */;
 
 
-	const int ZSTD_OVERLAPLOG_MIN =       0;
-	const int ZSTD_OVERLAPLOG_MAX =       9;
+	const c_int ZSTD_OVERLAPLOG_MIN =       0;
+	const c_int ZSTD_OVERLAPLOG_MAX =       9;
 
-	const int ZSTD_WINDOWLOG_LIMIT_DEFAULT = 27; /* by default, the streaming decoder will refuse any frame
+	const c_int ZSTD_WINDOWLOG_LIMIT_DEFAULT = 27; /* by default, the streaming decoder will refuse any frame
 											* requiring larger than (1<<ZSTD_WINDOWLOG_LIMIT_DEFAULT) window size,
 											* to preserve host's memory from unreasonable requirements.
 											* This limit can be overridden using ZSTD_DCtx_setParameter(,ZSTD_d_windowLogMax,).
@@ -1211,20 +1211,20 @@ public static class zstd
 
 
 	/* LDM parameter bounds */
-	const int ZSTD_LDM_HASHLOG_MIN =      ZSTD_HASHLOG_MIN;
-	const int ZSTD_LDM_HASHLOG_MAX =      ZSTD_HASHLOG_MAX;
-	const int ZSTD_LDM_MINMATCH_MIN =        4;
-	const int ZSTD_LDM_MINMATCH_MAX =     4096;
-	const int ZSTD_LDM_BUCKETSIZELOG_MIN =   1;
-	const int ZSTD_LDM_BUCKETSIZELOG_MAX =   8;
-	const int ZSTD_LDM_HASHRATELOG_MIN =     0;
-	const int ZSTD_LDM_HASHRATELOG_MAX = (ZSTD_WINDOWLOG_MAX - ZSTD_HASHLOG_MIN);
+	const c_int ZSTD_LDM_HASHLOG_MIN =      ZSTD_HASHLOG_MIN;
+	const c_int ZSTD_LDM_HASHLOG_MAX =      ZSTD_HASHLOG_MAX;
+	const c_int ZSTD_LDM_MINMATCH_MIN =        4;
+	const c_int ZSTD_LDM_MINMATCH_MAX =     4096;
+	const c_int ZSTD_LDM_BUCKETSIZELOG_MIN =   1;
+	const c_int ZSTD_LDM_BUCKETSIZELOG_MAX =   8;
+	const c_int ZSTD_LDM_HASHRATELOG_MIN =     0;
+	const c_int ZSTD_LDM_HASHRATELOG_MAX = (ZSTD_WINDOWLOG_MAX - ZSTD_HASHLOG_MIN);
 
 	/* Advanced parameter bounds */
-	const int ZSTD_TARGETCBLOCKSIZE_MIN =   1340 /* suitable to fit into an ethernet / wifi / 4G transport frame */;
-	const int ZSTD_TARGETCBLOCKSIZE_MAX =   ZSTD_BLOCKSIZE_MAX;
-	const int ZSTD_SRCSIZEHINT_MIN =        0;
-	// const int ZSTD_SRCSIZEHINT_MAX =        INT_MAX;
+	const c_int ZSTD_TARGETCBLOCKSIZE_MIN =   1340 /* suitable to fit into an ethernet / wifi / 4G transport frame */;
+	const c_int ZSTD_TARGETCBLOCKSIZE_MAX =   ZSTD_BLOCKSIZE_MAX;
+	const c_int ZSTD_SRCSIZEHINT_MIN =        0;
+	// const c_int ZSTD_SRCSIZEHINT_MAX =        INT_MAX;
 
 
 	/* ---  Advanced types  --- */
@@ -1267,7 +1267,7 @@ public static class zstd
 								* sequence provider perspective. For example, ZSTD_compressSequences() does not
 								* use this 'rep' field at all (as of now).
 								*/
-	};
+	}
 
 	public struct ZSTD_compressionParameters
 	{
@@ -1278,57 +1278,57 @@ public static class zstd
 		c_uint minMatch; /**< match length searched : larger == faster decompression, sometimes less compression */
 		c_uint targetLength; /**< acceptable match size for optimal parser (only) : larger == more compression, slower */
 		ZSTD_strategy strategy; /**< see ZSTD_strategy definition above */
-	};
+	}
 
 	public struct ZSTD_frameParameters
 	{
-		int contentSizeFlag; /**< 1: content size will be in frame header (when known) */
-		int checksumFlag; /**< 1: generate a 32-bits checksum using XXH64 algorithm at end of frame, for error detection */
-		int noDictIDFlag; /**< 1: no dictID will be saved into frame header (dictID is only useful for dictionary compression) */
-	};
+		c_int contentSizeFlag; /**< 1: content size will be in frame header (when known) */
+		c_int checksumFlag; /**< 1: generate a 32-bits checksum using XXH64 algorithm at end of frame, for error detection */
+		c_int noDictIDFlag; /**< 1: no dictID will be saved into frame header (dictID is only useful for dictionary compression) */
+	}
 
 	public struct ZSTD_parameters
 	{
 		ZSTD_compressionParameters cParams;
 		ZSTD_frameParameters fParams;
-	};
+	}
 
-	public enum ZSTD_dictContentType_e
+	public enum ZSTD_dictContentType_e : c_int
 	{
 		ZSTD_dct_auto = 0, /* dictionary is "full" when starting with ZSTD_MAGIC_DICTIONARY, otherwise it is "rawContent" */
 		ZSTD_dct_rawContent = 1, /* ensures dictionary is always loaded as rawContent, even if it starts with ZSTD_MAGIC_DICTIONARY */
 		ZSTD_dct_fullDict = 2 /* refuses to load a dictionary if it does not respect Zstandard's specification, starting with ZSTD_MAGIC_DICTIONARY */
-	};
+	}
 
-	public enum ZSTD_dictLoadMethod_e
+	public enum ZSTD_dictLoadMethod_e : c_int
 	{
 		ZSTD_dlm_byCopy = 0, /**< Copy dictionary content internally */
 		ZSTD_dlm_byRef = 1 /**< Reference dictionary content -- the dictionary buffer must outlive its users. */
-	};
+	}
 
-	public enum ZSTD_format_e
+	public enum ZSTD_format_e : c_int
 	{
 		ZSTD_f_zstd1 = 0, /* zstd frame format, specified in zstd_compression_format.md (default) */
 		ZSTD_f_zstd1_magicless = 1 /* Variant of zstd frame format, without initial 4-bytes magic number.
 									* Useful to save 4 bytes per generated frame.
 									* Decoder cannot recognise automatically this format, requiring this instruction. */
-	};
+	}
 
-	public enum ZSTD_forceIgnoreChecksum_e
+	public enum ZSTD_forceIgnoreChecksum_e : c_int
 	{
 		/* Note: this enum controls ZSTD_d_forceIgnoreChecksum */
 		ZSTD_d_validateChecksum = 0,
 		ZSTD_d_ignoreChecksum = 1
-	};
+	}
 
-	public enum ZSTD_refMultipleDDicts_e
+	public enum ZSTD_refMultipleDDicts_e : c_int
 	{
 		/* Note: this enum controls ZSTD_d_refMultipleDDicts */
 		ZSTD_rmd_refSingleDDict = 0,
 		ZSTD_rmd_refMultipleDDicts = 1
-	};
+	}
 
-	public enum ZSTD_dictAttachPref_e
+	public enum ZSTD_dictAttachPref_e : c_int
 	{
 		/* Note: this enum and the behavior it controls are effectively internal
 		* implementation details of the compressor. They are expected to continue
@@ -1366,9 +1366,9 @@ public static class zstd
 		ZSTD_dictForceAttach   = 1, /* Never copy the dictionary. */
 		ZSTD_dictForceCopy     = 2, /* Always copy the dictionary. */
 		ZSTD_dictForceLoad     = 3 /* Always reload the dictionary */
-	};
+	}
 
-	public enum ZSTD_literalCompressionMode_e
+	public enum ZSTD_literalCompressionMode_e : c_int
 	{
 		ZSTD_lcm_auto = 0, /**< Automatically determine the compression mode based on the compression level.
 									*   Negative compression levels will be uncompressed, and positive compression
@@ -1376,9 +1376,9 @@ public static class zstd
 		ZSTD_lcm_huffman = 1, /**< Always attempt Huffman compression. Uncompressed literals will still be
 									*   emitted if Huffman compression is not profitable. */
 		ZSTD_lcm_uncompressed = 2 /**< Always emit uncompressed literals. */
-	};
+	}
 
-	public enum ZSTD_ParamSwitch_e
+	public enum ZSTD_ParamSwitch_e : c_int
 	{
 		/* Note: This enum controls features which are conditionally beneficial.
 		* Zstd can take a decision on whether or not to enable the feature (ZSTD_ps_auto),
@@ -1387,7 +1387,7 @@ public static class zstd
 		ZSTD_ps_auto = 0, /* Let the library automatically determine whether the feature shall be enabled */
 		ZSTD_ps_enable = 1, /* Force-enable the feature */
 		ZSTD_ps_disable = 2 /* Do not use the feature */
-	};
+	}
 
 	typealias ZSTD_paramSwitch_e = ZSTD_ParamSwitch_e; /* old name */
 
@@ -1439,7 +1439,11 @@ public static class zstd
 		*           or an error code (if srcSize is too small) */
 	[CLink] public static extern size_t ZSTD_frameHeaderSize(void* src, size_t srcSize);
 
-	public enum ZSTD_FrameType_e { ZSTD_frame, ZSTD_skippableFrame };
+	public enum ZSTD_FrameType_e : c_int
+	{ 
+		ZSTD_frame, 
+		ZSTD_skippableFrame 
+	}
 
 	typealias ZSTD_frameType_e = ZSTD_FrameType_e; /* old name */
 
@@ -1454,7 +1458,7 @@ public static class zstd
 		c_uint checksumFlag;
 		c_uint _reserved1;
 		c_uint _reserved2;
-	};
+	}
 
 	typealias ZSTD_frameHeader = ZSTD_FrameHeader; /* old name */
 
@@ -1515,11 +1519,11 @@ public static class zstd
 	//         (blockSize)                                                                    /* One block of margin */   \
 	//     ))
 
-	enum ZSTD_SequenceFormat_e
+	public enum ZSTD_SequenceFormat_e : c_int
 	{
 		ZSTD_sf_noBlockDelimiters = 0, /* ZSTD_Sequence[] has no block delimiters, just sequences */
 		ZSTD_sf_explicitBlockDelimiters = 1 /* ZSTD_Sequence[] contains explicit block delimiters */
-	};
+	}
 
 	typealias ZSTD_sequenceFormat_e = ZSTD_SequenceFormat_e; /* old name */ /*! ZSTD_sequenceBound() :
 
@@ -1701,7 +1705,7 @@ public static class zstd
 	*  Note : only single-threaded compression is supported.
 	*  ZSTD_estimateCCtxSize_usingCCtxParams() will return an error code if ZSTD_c_nbWorkers is >= 1.
 	*/
-	[CLink] public static extern size_t ZSTD_estimateCCtxSize(int maxCompressionLevel);
+	[CLink] public static extern size_t ZSTD_estimateCCtxSize(c_int maxCompressionLevel);
 	[CLink] public static extern size_t ZSTD_estimateCCtxSize_usingCParams(ZSTD_compressionParameters cParams);
 	[CLink] public static extern size_t ZSTD_estimateCCtxSize_usingCCtxParams(ZSTD_CCtx_params* parameters);
 	[CLink] public static extern size_t ZSTD_estimateDCtxSize();
@@ -1726,7 +1730,7 @@ public static class zstd
 	*         an internal ?Dict will be created, which additional size is not estimated here.
 	*         In this case, get total size by adding ZSTD_estimate?DictSize
 	*/
-	[CLink] public static extern size_t ZSTD_estimateCStreamSize(int maxCompressionLevel);
+	[CLink] public static extern size_t ZSTD_estimateCStreamSize(c_int maxCompressionLevel);
 	[CLink] public static extern size_t ZSTD_estimateCStreamSize_usingCParams(ZSTD_compressionParameters cParams);
 	[CLink] public static extern size_t ZSTD_estimateCStreamSize_usingCCtxParams(ZSTD_CCtx_params* parameters);
 	[CLink] public static extern size_t ZSTD_estimateDStreamSize(size_t maxWindowSize);
@@ -1737,7 +1741,7 @@ public static class zstd
 		*  ZSTD_estimateCDictSize_advanced() makes it possible to control compression parameters precisely, like ZSTD_createCDict_advanced().
 		*  Note : dictionaries created by reference (`ZSTD_dlm_byRef`) are logically smaller.
 		*/
-	[CLink] public static extern size_t ZSTD_estimateCDictSize(size_t dictSize, int compressionLevel);
+	[CLink] public static extern size_t ZSTD_estimateCDictSize(size_t dictSize, c_int compressionLevel);
 	[CLink] public static extern size_t ZSTD_estimateCDictSize_advanced(size_t dictSize, ZSTD_compressionParameters cParams, ZSTD_dictLoadMethod_e dictLoadMethod);
 	[CLink] public static extern size_t ZSTD_estimateDDictSize(size_t dictSize, ZSTD_dictLoadMethod_e dictLoadMethod);
 
@@ -1786,7 +1790,7 @@ public static class zstd
 		ZSTD_allocFunction customAlloc;
 		ZSTD_freeFunction customFree;
 		void* opaque;
-	};
+	}
 
 	// static
 	// #ifdef __GNUC__
@@ -1797,7 +1801,7 @@ public static class zstd
 	// #pragma clang diagnostic push
 	// #pragma clang diagnostic ignored "-Wzero-as-null-pointer-constant"
 	// #endif
-	// ZSTD_customMem ZSTD_defaultCMem = { NULL, NULL, NULL };  /**< this constant defers to stdlib's functions */
+	// ZSTD_customMem ZSTD_defaultCMem = { NULL, NULL, NULL }  /**< this constant defers to stdlib's functions */
 	// #if defined(__clang__) && __clang_major__ >= 5
 	// #pragma clang diagnostic pop
 	// #endif
@@ -1819,7 +1823,7 @@ public static class zstd
 	*  to use an internal thread pool).
 	*  ZSTD_freeThreadPool frees a thread pool, accepts NULL pointer.
 	*/
-	public struct ZSTD_threadPool { };
+	public struct ZSTD_threadPool { }
 	[CLink] public static extern ZSTD_threadPool* ZSTD_createThreadPool(size_t numThreads);
 	[CLink] public static extern void ZSTD_freeThreadPool(ZSTD_threadPool* pool); /* accept NULL pointer */
 	[CLink] public static extern size_t ZSTD_CCtx_refThreadPool(ZSTD_CCtx* cctx, ZSTD_threadPool* pool);
@@ -1843,17 +1847,17 @@ public static class zstd
 	*  As a consequence, `dictBuffer` **must** outlive CDict,
 	*  and its content must remain unmodified throughout the lifetime of CDict.
 	*  note: equivalent to ZSTD_createCDict_advanced(), with dictLoadMethod==ZSTD_dlm_byRef */
-	[CLink] public static extern ZSTD_CDict* ZSTD_createCDict_byReference(void* dictBuffer, size_t dictSize, int compressionLevel);
+	[CLink] public static extern ZSTD_CDict* ZSTD_createCDict_byReference(void* dictBuffer, size_t dictSize, c_int compressionLevel);
 
 	/*! ZSTD_getCParams() :
 	* @return ZSTD_compressionParameters structure for a selected compression level and estimated srcSize.
 	* `estimatedSrcSize` value is optional, select 0 if not known */
-	[CLink] public static extern ZSTD_compressionParameters ZSTD_getCParams(int compressionLevel, c_ulonglong estimatedSrcSize, size_t dictSize);
+	[CLink] public static extern ZSTD_compressionParameters ZSTD_getCParams(c_int compressionLevel, c_ulonglong estimatedSrcSize, size_t dictSize);
 
 	/*! ZSTD_getParams() :
 	*  same as ZSTD_getCParams(), but @return a full `ZSTD_parameters` object instead of sub-component `ZSTD_compressionParameters`.
 	*  All fields of `ZSTD_frameParameters` are set to default : contentSize=1, checksum=0, noDictID=0 */
-	[CLink] public static extern ZSTD_parameters ZSTD_getParams(int compressionLevel, c_ulonglong estimatedSrcSize, size_t dictSize);
+	[CLink] public static extern ZSTD_parameters ZSTD_getParams(c_int compressionLevel, c_ulonglong estimatedSrcSize, size_t dictSize);
 
 	/*! ZSTD_checkCParams() :
 	*  Ensure param values remain within authorized range.
@@ -1942,22 +1946,22 @@ public static class zstd
 	* If the selected compression level is already running significantly slower,
 	* the overall speed won't be significantly impacted.
 	*/
-	const int ZSTD_c_rsyncable = (.)ZSTD_cParameter.ZSTD_c_experimentalParam1;
+	const c_int ZSTD_c_rsyncable = (.)ZSTD_cParameter.ZSTD_c_experimentalParam1;
 
 	/* Select a compression format.
 	* The value must be of type ZSTD_format_e.
 	* See ZSTD_format_e enum definition for details */
-	const int ZSTD_c_format = (.)ZSTD_cParameter.ZSTD_c_experimentalParam2;
+	const c_int ZSTD_c_format = (.)ZSTD_cParameter.ZSTD_c_experimentalParam2;
 
 	/* Force back-reference distances to remain < windowSize,
 	* even when referencing into Dictionary content (default:0) */
-	const int ZSTD_c_forceMaxWindow = (.)ZSTD_cParameter.ZSTD_c_experimentalParam3;
+	const c_int ZSTD_c_forceMaxWindow = (.)ZSTD_cParameter.ZSTD_c_experimentalParam3;
 
 	/* Controls whether the contents of a CDict
 	* are used in place, or copied into the working context.
 	* Accepts values from the ZSTD_dictAttachPref_e enum.
 	* See the comments on that enum for an explanation of the feature. */
-	const int ZSTD_c_forceAttachDict = (.)ZSTD_cParameter.ZSTD_c_experimentalParam4;
+	const c_int ZSTD_c_forceAttachDict = (.)ZSTD_cParameter.ZSTD_c_experimentalParam4;
 
 	/* Controlled with ZSTD_ParamSwitch_e enum.
 	* Default is ZSTD_ps_auto.
@@ -1969,13 +1973,13 @@ public static class zstd
 	* literals compression based on the compression parameters - specifically,
 	* negative compression levels do not use literal compression.
 	*/
-	const int ZSTD_c_literalCompressionMode = (.)ZSTD_cParameter.ZSTD_c_experimentalParam5;
+	const c_int ZSTD_c_literalCompressionMode = (.)ZSTD_cParameter.ZSTD_c_experimentalParam5;
 
 	/* User's best guess of source size.
 	* Hint is not valid when srcSizeHint == 0.
 	* There is no guarantee that hint is close to actual source size,
 	* but compression ratio may regress significantly if guess considerably underestimates */
-	const int ZSTD_c_srcSizeHint = (.)ZSTD_cParameter.ZSTD_c_experimentalParam7;
+	const c_int ZSTD_c_srcSizeHint = (.)ZSTD_cParameter.ZSTD_c_experimentalParam7;
 
 	/* Controls whether the new and experimental "dedicated dictionary search
 	* structure" can be used. This feature is still rough around the edges, be
@@ -2031,7 +2035,7 @@ public static class zstd
 	* so--and CDict creation to be slightly slower. Eventually, we will probably
 	* make this mode the default.
 	*/
-	const int ZSTD_c_enableDedicatedDictSearch = (.)ZSTD_cParameter.ZSTD_c_experimentalParam8;
+	const c_int ZSTD_c_enableDedicatedDictSearch = (.)ZSTD_cParameter.ZSTD_c_experimentalParam8;
 
 	/* ZSTD_c_stableInBuffer
 	* Experimental parameter.
@@ -2064,7 +2068,7 @@ public static class zstd
 	* matches. Normally zstd maintains its own window buffer for this purpose,
 	* but passing this flag tells zstd to rely on user provided buffer instead.
 	*/
-	const int ZSTD_c_stableInBuffer  = (.)ZSTD_cParameter.ZSTD_c_experimentalParam8;
+	const c_int ZSTD_c_stableInBuffer  = (.)ZSTD_cParameter.ZSTD_c_experimentalParam8;
 
 	/* ZSTD_c_stableOutBuffer
 	* Experimental parameter.
@@ -2084,7 +2088,7 @@ public static class zstd
 	* Zstd will check that (out.size - out.pos) never grows and return an error
 	* if it does. While not strictly necessary, this should prevent surprises.
 	*/
-	const int ZSTD_c_stableOutBuffer = (.)ZSTD_cParameter.ZSTD_c_experimentalParam10;
+	const c_int ZSTD_c_stableOutBuffer = (.)ZSTD_cParameter.ZSTD_c_experimentalParam10;
 
 	/* ZSTD_c_blockDelimiters
 	* Default is 0 == ZSTD_sf_noBlockDelimiters.
@@ -2095,7 +2099,7 @@ public static class zstd
 	* and last literals, which are defined as sequences with offset == 0 and matchLength == 0.
 	* See the definition of ZSTD_Sequence for more specifics.
 	*/
-	const int ZSTD_c_blockDelimiters = (.)ZSTD_cParameter.ZSTD_c_experimentalParam11;
+	const c_int ZSTD_c_blockDelimiters = (.)ZSTD_cParameter.ZSTD_c_experimentalParam11;
 
 	/* ZSTD_c_validateSequences
 	* Default is 0 == disabled. Set to 1 to enable sequence validation.
@@ -2112,7 +2116,7 @@ public static class zstd
 	* specifics regarding offset/matchlength requirements) then the function will bail out and
 	* return an error.
 	*/
-	const int ZSTD_c_validateSequences = (.)ZSTD_cParameter.ZSTD_c_experimentalParam12;
+	const c_int ZSTD_c_validateSequences = (.)ZSTD_cParameter.ZSTD_c_experimentalParam12;
 
 	/* ZSTD_c_blockSplitterLevel
 	* note: this parameter only influences the first splitter stage,
@@ -2128,9 +2132,9 @@ public static class zstd
 	* Note that currently the first block is never split,
 	* to ensure expansion guarantees in presence of incompressible data.
 	*/
-	const int ZSTD_BLOCKSPLITTER_LEVEL_MAX = 6;
+	const c_int ZSTD_BLOCKSPLITTER_LEVEL_MAX = 6;
 
-	const int ZSTD_c_blockSplitterLevel = (.)ZSTD_cParameter.ZSTD_c_experimentalParam20;
+	const c_int ZSTD_c_blockSplitterLevel = (.)ZSTD_cParameter.ZSTD_c_experimentalParam20;
 
 	/* ZSTD_c_splitAfterSequences
 	* This is a stronger splitter algorithm,
@@ -2148,7 +2152,7 @@ public static class zstd
 	* By default, in ZSTD_ps_auto, the library will decide at runtime whether to use
 	* block splitting based on the compression parameters.
 	*/
-	const int ZSTD_c_splitAfterSequences = (.)ZSTD_cParameter.ZSTD_c_experimentalParam13;
+	const c_int ZSTD_c_splitAfterSequences = (.)ZSTD_cParameter.ZSTD_c_experimentalParam13;
 
 	/* ZSTD_c_useRowMatchFinder
 	* Controlled with ZSTD_ParamSwitch_e enum.
@@ -2160,7 +2164,7 @@ public static class zstd
 	* the row-based matchfinder based on support for SIMD instructions and the window log.
 	* Note that this only pertains to compression strategies: greedy, lazy, and lazy2
 	*/
-	const int ZSTD_c_useRowMatchFinder = (.)ZSTD_cParameter.ZSTD_c_experimentalParam14;
+	const c_int ZSTD_c_useRowMatchFinder = (.)ZSTD_cParameter.ZSTD_c_experimentalParam14;
 
 	/* ZSTD_c_deterministicRefPrefix
 	* Default is 0 == disabled. Set to 1 to enable.
@@ -2180,7 +2184,7 @@ public static class zstd
 	* intentionally making the dictionary and data contiguous will be worth the
 	* cost to memcpy() the data.
 	*/
-	const int ZSTD_c_deterministicRefPrefix = (.)ZSTD_cParameter.ZSTD_c_experimentalParam15;
+	const c_int ZSTD_c_deterministicRefPrefix = (.)ZSTD_cParameter.ZSTD_c_experimentalParam15;
 
 	/* ZSTD_c_prefetchCDictTables
 	* Controlled with ZSTD_ParamSwitch_e enum. Default is ZSTD_ps_auto.
@@ -2203,7 +2207,7 @@ public static class zstd
 	* heuristic for cold CDicts.
 	* Use ZSTD_ps_disable to opt out of prefetching under any circumstances.
 	*/
-	const int ZSTD_c_prefetchCDictTables = (.)ZSTD_cParameter.ZSTD_c_experimentalParam16;
+	const c_int ZSTD_c_prefetchCDictTables = (.)ZSTD_cParameter.ZSTD_c_experimentalParam16;
 
 	/* ZSTD_c_enableSeqProducerFallback
 	* Allowed values are 0 (disable) and 1 (enable). The default setting is 0.
@@ -2217,7 +2221,7 @@ public static class zstd
 	*
 	* The user is strongly encouraged to read the full Block-Level Sequence Producer API
 	* documentation (below) before setting this parameter. */
-	const int ZSTD_c_enableSeqProducerFallback = (.)ZSTD_cParameter.ZSTD_c_experimentalParam17;
+	const c_int ZSTD_c_enableSeqProducerFallback = (.)ZSTD_cParameter.ZSTD_c_experimentalParam17;
 
 	/* ZSTD_c_maxBlockSize
 	* Allowed values are between 1KB and ZSTD_BLOCKSIZE_MAX (128KB).
@@ -2228,7 +2232,7 @@ public static class zstd
 	* bounds greater than ZSTD_BLOCKSIZE_MAX or bounds lower than 1KB (will make
 	* compressBound() inaccurate). Only currently meant to be used for testing.
 	*/
-	const int ZSTD_c_maxBlockSize = (.)ZSTD_cParameter.ZSTD_c_experimentalParam18;
+	const c_int ZSTD_c_maxBlockSize = (.)ZSTD_cParameter.ZSTD_c_experimentalParam18;
 
 	/* ZSTD_c_repcodeResolution
 	* This parameter only has an effect if ZSTD_c_blockDelimiters is
@@ -2252,16 +2256,16 @@ public static class zstd
 	* The default value is ZSTD_ps_auto, for which the library will enable/disable
 	* based on compression level (currently: level<10 disables, level>=10 enables).
 	*/
-	const int ZSTD_c_repcodeResolution = (.)ZSTD_cParameter.ZSTD_c_experimentalParam19;
-	const int ZSTD_c_searchForExternalRepcodes = (.)ZSTD_cParameter.ZSTD_c_experimentalParam19; /* older name */
+	const c_int ZSTD_c_repcodeResolution = (.)ZSTD_cParameter.ZSTD_c_experimentalParam19;
+	const c_int ZSTD_c_searchForExternalRepcodes = (.)ZSTD_cParameter.ZSTD_c_experimentalParam19; /* older name */
 
 
 	/*! ZSTD_CCtx_getParameter() :
 	*  Get the requested compression parameter value, selected by enum ZSTD_cParameter,
-	*  and store it into int* value.
+	*  and store it into c_int* value.
 	* @return : 0, or an error code (which can be tested with ZSTD_isError()).
 	*/
-	[CLink] public static extern size_t ZSTD_CCtx_getParameter(ZSTD_CCtx* cctx, ZSTD_cParameter param, int* value);
+	[CLink] public static extern size_t ZSTD_CCtx_getParameter(ZSTD_CCtx* cctx, ZSTD_cParameter param, c_int* value);
 
 	/*! ZSTD_CCtx_params :
 	*  Quick howto :
@@ -2292,7 +2296,7 @@ public static class zstd
 	*  Initializes the compression parameters of cctxParams according to
 	*  compression level. All other parameters are reset to their default values.
 	*/
-	[CLink] public static extern size_t ZSTD_CCtxParams_init(ZSTD_CCtx_params* cctxParams, int compressionLevel);
+	[CLink] public static extern size_t ZSTD_CCtxParams_init(ZSTD_CCtx_params* cctxParams, c_int compressionLevel);
 
 	/*! ZSTD_CCtxParams_init_advanced() :
 	*  Initializes the compression and frame parameters of cctxParams according to
@@ -2308,14 +2312,14 @@ public static class zstd
 	* @result : a code representing success or failure (which can be tested with
 	*           ZSTD_isError()).
 	*/
-	[CLink] public static extern size_t ZSTD_CCtxParams_setParameter(ZSTD_CCtx_params* parameters, ZSTD_cParameter param, int value);
+	[CLink] public static extern size_t ZSTD_CCtxParams_setParameter(ZSTD_CCtx_params* parameters, ZSTD_cParameter param, c_int value);
 
 	/*! ZSTD_CCtxParams_getParameter() :
 	* Similar to ZSTD_CCtx_getParameter.
 	* Get the requested value of one compression parameter, selected by enum ZSTD_cParameter.
 	* @result : 0, or an error code (which can be tested with ZSTD_isError()).
 	*/
-	[CLink] public static extern size_t ZSTD_CCtxParams_getParameter(ZSTD_CCtx_params* parameters, ZSTD_cParameter param, int* value);
+	[CLink] public static extern size_t ZSTD_CCtxParams_getParameter(ZSTD_CCtx_params* parameters, ZSTD_cParameter param, c_int* value);
 
 	/*! ZSTD_CCtx_setParametersUsingCCtxParams() :
 	*  Apply a set of ZSTD_CCtx_params to the compression context.
@@ -2383,16 +2387,16 @@ public static class zstd
 
 	/*! ZSTD_DCtx_getParameter() :
 	*  Get the requested decompression parameter value, selected by enum ZSTD_dParameter,
-	*  and store it into int* value.
+	*  and store it into c_int* value.
 	* @return : 0, or an error code (which can be tested with ZSTD_isError()).
 	*/
-	[CLink] public static extern size_t ZSTD_DCtx_getParameter(ZSTD_DCtx* dctx, ZSTD_dParameter param, int* value);
+	[CLink] public static extern size_t ZSTD_DCtx_getParameter(ZSTD_DCtx* dctx, ZSTD_dParameter param, c_int* value);
 
 	/* ZSTD_d_format
 	* experimental parameter,
 	* allowing selection between ZSTD_format_e input compression formats
 	*/
-	const int ZSTD_d_format = (.)ZSTD_dParameter.ZSTD_d_experimentalParam1;;
+	const c_int ZSTD_d_format = (.)ZSTD_dParameter.ZSTD_d_experimentalParam1;;
 	/* ZSTD_d_stableOutBuffer
 	* Experimental parameter.
 	* Default is 0 == disabled. Set to 1 to enable.
@@ -2423,7 +2427,7 @@ public static class zstd
 	* matches. Normally zstd maintains its own buffer for this purpose, but passing
 	* this flag tells zstd to use the user provided buffer.
 	*/
-	const int ZSTD_d_stableOutBuffer = (.)ZSTD_dParameter.ZSTD_d_experimentalParam2;
+	const c_int ZSTD_d_stableOutBuffer = (.)ZSTD_dParameter.ZSTD_d_experimentalParam2;
 
 	/* ZSTD_d_forceIgnoreChecksum
 	* Experimental parameter.
@@ -2434,7 +2438,7 @@ public static class zstd
 	* slight performance benefits, and may be useful for debugging.
 	* Param has values of type ZSTD_forceIgnoreChecksum_e
 	*/
-	const int ZSTD_d_forceIgnoreChecksum = (.)ZSTD_dParameter.ZSTD_d_experimentalParam3;
+	const c_int ZSTD_d_forceIgnoreChecksum = (.)ZSTD_dParameter.ZSTD_d_experimentalParam3;
 
 	/* ZSTD_d_refMultipleDDicts
 	* Experimental parameter.
@@ -2457,7 +2461,7 @@ public static class zstd
 	* Although this function allocates memory for the table, the user is still responsible for
 	* memory management of the underlying ZSTD_DDict* themselves.
 	*/
-	const int ZSTD_d_refMultipleDDicts = (.)ZSTD_dParameter.ZSTD_d_experimentalParam4;
+	const c_int ZSTD_d_refMultipleDDicts = (.)ZSTD_dParameter.ZSTD_d_experimentalParam4;
 
 	/* ZSTD_d_disableHuffmanAssembly
 	* Set to 1 to disable the Huffman assembly implementation.
@@ -2468,7 +2472,7 @@ public static class zstd
 	* If you want to disable it at compile time you can define the macro
 	* ZSTD_DISABLE_ASM.
 	*/
-	const int ZSTD_d_disableHuffmanAssembly = (.)ZSTD_dParameter.ZSTD_d_experimentalParam5;
+	const c_int ZSTD_d_disableHuffmanAssembly = (.)ZSTD_dParameter.ZSTD_d_experimentalParam5;
 
 	/* ZSTD_d_maxBlockSize
 	* Allowed values are between 1KB and ZSTD_BLOCKSIZE_MAX (128KB).
@@ -2484,7 +2488,7 @@ public static class zstd
 	* WARNING: This causes the decoder to reject otherwise valid frames
 	* that have block sizes larger than the configured maxBlockSize.
 	*/
-	const int ZSTD_d_maxBlockSize = (.)ZSTD_dParameter.ZSTD_d_experimentalParam6;
+	const c_int ZSTD_d_maxBlockSize = (.)ZSTD_dParameter.ZSTD_d_experimentalParam6;
 
 
 	/*! ZSTD_DCtx_setFormat() :
@@ -2529,7 +2533,7 @@ public static class zstd
 	*/
 
 	[CLink, Obsolete("use ZSTD_CCtx_reset, see zstd.h for detailed instructions")]
-	public static extern size_t ZSTD_initCStream_srcSize(ZSTD_CStream* zcs, int compressionLevel, c_ulonglong pledgedSrcSize);
+	public static extern size_t ZSTD_initCStream_srcSize(ZSTD_CStream* zcs, c_int compressionLevel, c_ulonglong pledgedSrcSize);
 
 	/*! ZSTD_initCStream_usingDict() :
 	* This function is DEPRECATED, and is equivalent to:
@@ -2545,7 +2549,7 @@ public static class zstd
 	*/
 
 	[CLink, Obsolete("use ZSTD_CCtx_reset, see zstd.h for detailed instructions")]
-	public static extern size_t ZSTD_initCStream_usingDict(ZSTD_CStream* zcs, void* dict, size_t dictSize, int compressionLevel);
+	public static extern size_t ZSTD_initCStream_usingDict(ZSTD_CStream* zcs, void* dict, size_t dictSize, c_int compressionLevel);
 
 	/*! ZSTD_initCStream_advanced() :
 	* This function is DEPRECATED, and is equivalent to:
@@ -2622,7 +2626,7 @@ public static class zstd
 		c_ulonglong flushed; /* nb of compressed bytes flushed : not provided; can be tracked from caller side */
 		c_uint currentJobID; /* MT only : latest started job nb */
 		c_uint nbActiveWorkers; /* MT only : nb of workers actively compressing at probe time */
-	};
+	}
 
 	/* ZSTD_getFrameProgression() :
 	* tells how much data has been ingested (read from input)
@@ -2810,9 +2814,9 @@ public static class zstd
 	* overcoming them. It is purely a question of engineering effort.
 	*/
 
-	//const int ZSTD_SEQUENCE_PRODUCER_ERROR = (suzeof(size_t)(-1));
+	//const c_int ZSTD_SEQUENCE_PRODUCER_ERROR = (suzeof(size_t)(-1));
 
-	function size_t ZSTD_sequenceProducer_F(void* sequenceProducerState, ZSTD_Sequence* outSeqs, size_t outSeqsCapacity, void* src, size_t srcSize, void* dict, size_t dictSize, int compressionLevel, size_t windowSize);
+	function size_t ZSTD_sequenceProducer_F(void* sequenceProducerState, ZSTD_Sequence* outSeqs, size_t outSeqsCapacity, void* src, size_t srcSize, void* dict, size_t dictSize, c_int compressionLevel, size_t windowSize);
 
 	/*! ZSTD_registerSequenceProducer() :
 	* Instruct zstd to use a block-level external sequence producer function.
@@ -2895,10 +2899,10 @@ public static class zstd
 	/*=====   Buffer-less streaming compression functions  =====*/
 
 	[CLink, Obsolete("The buffer-less API is deprecated in favor of the normal streaming API. See docs.")]
-	public static extern size_t ZSTD_compressBegin(ZSTD_CCtx* cctx, int compressionLevel);
+	public static extern size_t ZSTD_compressBegin(ZSTD_CCtx* cctx, c_int compressionLevel);
 
 	[CLink, Obsolete("The buffer-less API is deprecated in favor of the normal streaming API. See docs.")]
-	public static extern size_t ZSTD_compressBegin_usingDict(ZSTD_CCtx* cctx, void* dict, size_t dictSize, int compressionLevel);
+	public static extern size_t ZSTD_compressBegin_usingDict(ZSTD_CCtx* cctx, void* dict, size_t dictSize, c_int compressionLevel);
 
 	[CLink, Obsolete("The buffer-less API is deprecated in favor of the normal streaming API. See docs.")]
 	public static extern size_t ZSTD_compressBegin_usingCDict(ZSTD_CCtx* cctx, ZSTD_CDict* cdict); /**< note: fails if cdict==NULL */
@@ -3010,7 +3014,14 @@ public static class zstd
 	[CLink, Obsolete("This function will likely be removed in the next minor release. It is misleading and has very limited utility.")]
 	public static extern void   ZSTD_copyDCtx(ZSTD_DCtx* dctx, ZSTD_DCtx* preparedDCtx);
 
-	public enum ZSTD_nextInputType_e { ZSTDnit_frameHeader, ZSTDnit_blockHeader, ZSTDnit_block, ZSTDnit_lastBlock, ZSTDnit_checksum, ZSTDnit_skippableFrame };
+	public enum ZSTD_nextInputType_e : c_int
+	{ 
+		ZSTDnit_frameHeader,
+	 	ZSTDnit_blockHeader,
+	 	ZSTDnit_block,
+	 	ZSTDnit_lastBlock,
+		ZSTDnit_checksum, ZSTDnit_skippableFrame 
+	}
 
 	[CLink] public static extern ZSTD_nextInputType_e ZSTD_nextInputType(ZSTD_DCtx* dctx);
 

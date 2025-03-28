@@ -1,4 +1,10 @@
-clang -c -g -gcodeview -o zstd-windows.lib -target x86_64-pc-windows -fuse-ld=llvm-lib -Wall zstd\zstd.c
-
 mkdir libs
-move zstd-windows.lib libs
+mkdir libs\debug
+mkdir libs\release
+cd zstd\build\cmake
+cmake -DZSTD_BUILD_STATIC:BOOL=ON .
+cmake --build .
+copy lib\Debug\zstd_static.lib ..\..\..\libs\debug
+copy lib\Debug\zstd_static.pdb ..\..\..\libs\debug
+cmake --build . --config Release
+copy lib\Release\zstd_static.lib ..\..\..\libs\release

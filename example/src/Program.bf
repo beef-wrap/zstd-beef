@@ -4,7 +4,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Interop;
 using System.Text;
-using static zstd_Beef.zstd;
+
+using static zstd.zstd;
 
 namespace example;
 
@@ -41,7 +42,7 @@ static class Program
 
 		ZSTD_decompress(buf_decompressed, size_framecontent, buf_compressed, size_compressed);
 
-		Debug.WriteLine(StringView(buf_decompressed));
+		Debug.WriteLine(StringView(buf_decompressed, str.Length));
 
 		return 0;
 	}

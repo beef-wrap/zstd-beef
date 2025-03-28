@@ -10,7 +10,7 @@
 
 using System;
 
-namespace zstd_Beef;
+namespace zstd;
 
 extension zstd
 {
@@ -28,7 +28,7 @@ extension zstd
 	*           This is the only supported way to use the error list < v1.3.1
 	*  note 3 : ZSTD_isError() is always correct, whatever the library version.
 	**********************************************/
-	public enum ZSTD_ErrorCode
+	public enum ZSTD_ErrorCode : c_int
 	{
 		ZSTD_error_no_error = 0,
 		ZSTD_error_GENERIC  = 1,
@@ -67,7 +67,7 @@ extension zstd
 		ZSTD_error_sequenceProducer_failed = 106,
 		ZSTD_error_externalSequences_invalid = 107,
 		ZSTD_error_maxCode = 120 /* never EVER use this value directly, it can change in future versions! Use ZSTD_isError() instead */
-	};
+	}
 
 	[CLink] public static extern char* ZSTD_getErrorString(ZSTD_ErrorCode code); /**< Same as ZSTD_getErrorName, but using a `ZSTD_ErrorCode` enum argument */
 }

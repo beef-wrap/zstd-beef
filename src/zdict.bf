@@ -11,7 +11,7 @@
 using System;
 using System.Interop;
 
-namespace zstd_Beef;
+namespace zstd;
 
 extension zstd
 {
@@ -179,7 +179,7 @@ extension zstd
 
 	public struct ZDICT_params_t
 	{
-		int      compressionLevel; /**< optimize for a specific zstd compression level; 0 means default */
+		c_int      compressionLevel; /**< optimize for a specific zstd compression level; 0 means default */
 		c_uint notificationLevel; /**< Write log to stderr; 0 = none (default); 1 = errors; 2 = progression; 3 = details; 4 = debug; */
 		c_uint dictID; /**< force dictID value; 0 means auto mode (32-bits random value)
 									*   NOTE: The zstd format reserves some dictionary IDs for future use.
@@ -189,7 +189,7 @@ extension zstd
 									*           - low range  : <= 32767
 									*           - high range : >= (2^31)
 									*/
-	};
+	}
 
 	/*! ZDICT_finalizeDictionary():
 	* Given a custom content as a basis for dictionary, and a set of samples,
@@ -242,9 +242,9 @@ extension zstd
 	* Use them only in association with static linking.
 	* ==================================================================================== */
 
-	const int ZDICT_DICTSIZE_MIN =    256;
+	const c_int ZDICT_DICTSIZE_MIN =    256;
 	/* Deprecated: Remove in v1.6.0 */
-	const int ZDICT_CONTENTSIZE_MIN = 128;
+	const c_int ZDICT_CONTENTSIZE_MIN = 128;
 
 	/*! ZDICT_cover_params_t:
 	*  k and d are the only required parameters.
@@ -260,7 +260,7 @@ extension zstd
 		c_uint shrinkDict; /* Train dictionaries to shrink in size starting from the minimum size and selects the smallest dictionary that is shrinkDictMaxRegression% worse than the largest dictionary. 0 means no shrinking and 1 means shrinking  */
 		c_uint shrinkDictMaxRegression; /* Sets shrinkDictMaxRegression so that a smaller dictionary can be at worse shrinkDictMaxRegression% worse than the max dict size dictionary. */
 		ZDICT_params_t zParams;
-	};
+	}
 
 	public struct  ZDICT_fastCover_params_t
 	{
@@ -275,7 +275,7 @@ extension zstd
 		c_uint shrinkDictMaxRegression; /* Sets shrinkDictMaxRegression so that a smaller dictionary can be at worse shrinkDictMaxRegression% worse than the max dict size dictionary. */
 
 		ZDICT_params_t zParams;
-	};
+	}
 
 	/*! ZDICT_trainFromBuffer_cover():
 	*  Train a dictionary from an array of samples using the COVER algorithm.
@@ -354,7 +354,7 @@ extension zstd
 	{
 		c_uint selectivityLevel; /* 0 means default; larger => select more => larger dictionary */
 		ZDICT_params_t zParams;
-	};
+	}
 
 	/*! ZDICT_trainFromBuffer_legacy():
 	*  Train a dictionary from an array of samples.
